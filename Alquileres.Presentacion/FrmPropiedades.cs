@@ -82,6 +82,11 @@ namespace Alquileres.Presentacion
 
             cmbEstado.SelectedIndex = 0;
         }
+
+        private void btnCerrar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
 

@@ -45,6 +45,7 @@ namespace Alquileres.Presentacion
             txtBanios = new TextBox();
             cmbEstado = new ComboBox();
             txtPrecio = new TextBox();
+            btnCerrar = new Button();
             ((System.ComponentModel.ISupportInitialize)dvgPropiedades).BeginInit();
             SuspendLayout();
             // 
@@ -203,12 +204,26 @@ namespace Alquileres.Presentacion
             txtPrecio.Size = new Size(73, 23);
             txtPrecio.TabIndex = 15;
             // 
+            // btnCerrar
+            // 
+            btnCerrar.BackColor = SystemColors.ActiveCaptionText;
+            btnCerrar.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCerrar.ForeColor = SystemColors.ButtonHighlight;
+            btnCerrar.Location = new Point(403, 269);
+            btnCerrar.Name = "btnCerrar";
+            btnCerrar.Size = new Size(89, 43);
+            btnCerrar.TabIndex = 16;
+            btnCerrar.Text = "CERRAR";
+            btnCerrar.UseVisualStyleBackColor = false;
+            btnCerrar.Click += btnCerrar_Click;
+            // 
             // FrmPropiedades
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDarkDark;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnCerrar);
             Controls.Add(txtPrecio);
             Controls.Add(cmbEstado);
             Controls.Add(txtBanios);
@@ -252,5 +267,6 @@ namespace Alquileres.Presentacion
         private TextBox txtBanios;
         private ComboBox cmbEstado;
         private TextBox txtPrecio;
+        private Button btnCerrar;
     }
 }
