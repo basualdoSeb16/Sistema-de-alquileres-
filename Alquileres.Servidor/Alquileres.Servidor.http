@@ -1,0 +1,6 @@
+@Alquileres.Servidor_HostAddress = http://localhost:5031
+
+GET {{Alquileres.Servidor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
