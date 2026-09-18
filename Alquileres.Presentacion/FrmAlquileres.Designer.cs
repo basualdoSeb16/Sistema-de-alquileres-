@@ -54,33 +54,33 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 9.75F);
+            label2.Font = new Font("Segoe UI", 12F);
             label2.ForeColor = SystemColors.ButtonHighlight;
-            label2.Location = new Point(110, 83);
+            label2.Location = new Point(107, 77);
             label2.Name = "label2";
-            label2.Size = new Size(72, 17);
+            label2.Size = new Size(84, 21);
             label2.TabIndex = 1;
             label2.Text = "Propiedad:";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 9.75F);
+            label3.Font = new Font("Segoe UI", 12F);
             label3.ForeColor = SystemColors.ButtonHighlight;
-            label3.Location = new Point(110, 128);
+            label3.Location = new Point(107, 122);
             label3.Name = "label3";
-            label3.Size = new Size(50, 17);
+            label3.Size = new Size(61, 21);
             label3.TabIndex = 2;
             label3.Text = "Cliente:";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 9.75F);
+            label4.Font = new Font("Segoe UI", 12F);
             label4.ForeColor = SystemColors.ButtonHighlight;
-            label4.Location = new Point(110, 175);
+            label4.Location = new Point(107, 169);
             label4.Name = "label4";
-            label4.Size = new Size(41, 17);
+            label4.Size = new Size(50, 21);
             label4.TabIndex = 3;
             label4.Text = "Inicio:";
             // 

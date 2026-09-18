@@ -64,10 +64,24 @@ namespace Alquileres.Servidor.Controllers
         [HttpPost]
         public ActionResult Create(Propiedad propiedad)
         {
+            // Validar que el precio sea mayor que cero
+            if (propiedad.Precio <= 0)
+            {
+                return BadRequest("ERROR El precio debe ser mayor que cero");
+            }
+
+            // Validar que la dirección no esté vacía
+            if (string.IsNullOrWhiteSpace(propiedad.Direccion))
+            {
+                return BadRequest("La dirección es obligatoria");
+            }
+
+
             propiedad.Id = propiedades.Any()
                 ? propiedades.Max(a => a.Id) + 1
                 : 1;
 
+            //Propiedad Creada con exito, se agrega a la lista de propiedades
             propiedades.Add(propiedad);
 
             return CreatedAtAction(
