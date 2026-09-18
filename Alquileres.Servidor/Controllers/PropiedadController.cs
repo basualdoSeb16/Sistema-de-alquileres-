@@ -36,8 +36,12 @@ namespace Alquileres.Servidor.Controllers
         // Permite obtener todas las propiedades.
         [HttpGet]
         public ActionResult Get() 
-        { 
-            return Ok(propiedades);
+        {
+            return Ok(new
+            {
+                mensaje = "Propiedades disponibles obtenidas correctamente",
+                propiedades = propiedades
+            });
         }
 
         // Permite obtener una propiedad por su Id.
