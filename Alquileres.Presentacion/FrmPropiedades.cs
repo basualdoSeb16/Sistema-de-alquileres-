@@ -46,30 +46,105 @@ namespace Alquileres.Presentacion
             }
         }
 
+      
         private async void btnAgregar_Click(object sender, EventArgs e)
         {
-            // Crea una nueva propiedad con los datos del formulario.
+            // Validar dirección
+            if (string.IsNullOrWhiteSpace(txtDireccion.Text))
+            {
+                MessageBox.Show("La dirección es obligatoria.");
+                txtDireccion.Focus();
+                return;
+            }
+
+            // Validar tipo
+            if (string.IsNullOrWhiteSpace(txtTipo.Text))
+            {
+                MessageBox.Show("El tipo de propiedad es obligatorio.");
+                txtTipo.Focus();
+                return;
+            }
+
+            // Validar habitaciones
+            if (!int.TryParse(txtHabitaciones.Text, out int habitaciones))
+            {
+                MessageBox.Show("Ingrese una cantidad válida de habitaciones.");
+                txtHabitaciones.Focus();
+                return;
+            }
+
+            if (habitaciones <= 0)
+            {
+                MessageBox.Show("La cantidad de habitaciones debe ser mayor que cero.");
+                txtHabitaciones.Focus();
+                return;
+            }
+
+            // Validar baños
+            if (!int.TryParse(txtBanios.Text, out int banios))
+            {
+                MessageBox.Show("Ingrese una cantidad válida de baños.");
+                txtBanios.Focus();
+                return;
+            }
+
+            if (banios <= 0)
+            {
+                MessageBox.Show("La cantidad de baños debe ser mayor que cero.");
+                txtBanios.Focus();
+                return;
+            }
+
+            // Validar precio
+            if (!decimal.TryParse(txtPrecio.Text, out decimal precio))
+            {
+                MessageBox.Show("Ingrese un precio válido.");
+                txtPrecio.Focus();
+                return;
+            }
+
+            if (precio <= 0)
+            {
+                MessageBox.Show("El precio debe ser mayor que cero.");
+                txtPrecio.Focus();
+                return;
+            }
+
+            // Crear la propiedad
             Propiedad propiedad = new Propiedad
             {
                 Direccion = txtDireccion.Text,
                 Tipo = txtTipo.Text,
-                Habitaciones = int.Parse(txtHabitaciones.Text),
-                Banios = int.Parse(txtBanios.Text),
-                Precio = decimal.Parse(txtPrecio.Text),
+                Habitaciones = habitaciones,
+                Banios = banios,
+                Precio = precio,
                 Estado = cmbEstado.Text
             };
 
-            await apiService.CrearPropiedad(propiedad);
+            try
+            {
+                // Enviar la propiedad a la API
+                await apiService.CrearPropiedad(propiedad);
 
-            MessageBox.Show("Propiedad registrada correctamente.");
+                MessageBox.Show("Propiedad registrada correctamente.");
 
-            LimpiarCampos();
+                LimpiarCampos();
 
-            var propiedades = await apiService.ObtenerPropiedades();
+                // Actualizar el DataGridView
+                var propiedades = await apiService.ObtenerPropiedades();
 
-            // Actualiza el DataGridView.
-            dvgPropiedades.DataSource = propiedades;
+                if (propiedades != null)
+                {
+                    dvgPropiedades.DataSource = propiedades;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
         }
+
+
 
         // Limpia los campos del formulario.
         private void LimpiarCampos()

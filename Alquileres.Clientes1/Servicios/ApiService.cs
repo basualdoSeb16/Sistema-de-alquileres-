@@ -34,18 +34,26 @@ namespace Alquileres.Clientes1.Servicios
                     "api/Propiedad");
         }
 
-        // Envía una nueva propiedad al servidor.
+        
         public async Task<Propiedad?> CrearPropiedad(Propiedad propiedad)
         {
-                var respuesta = await httpClient.PostAsJsonAsync(
-                    "api/Propiedad",
-                    propiedad);
+            var respuesta = await httpClient.PostAsJsonAsync(
+                "api/Propiedad",
+                propiedad);
 
-                respuesta.EnsureSuccessStatusCode();
+            if (!respuesta.IsSuccessStatusCode)
+            {
+                string mensaje = await respuesta.Content.ReadAsStringAsync();
 
-                return await respuesta.Content
-                    .ReadFromJsonAsync<Propiedad>();
+                throw new Exception(
+                    $"Error {((int)respuesta.StatusCode)}: {mensaje}");
+            }
+
+            return await respuesta.Content
+                .ReadFromJsonAsync<Propiedad>();
         }
+
+
 
         // Obtiene todos los alquileres desde el servidor.
         public async Task<List<Alquiler>?> ObtenerAlquileres()
