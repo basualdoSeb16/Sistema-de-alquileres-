@@ -1,97 +1,78 @@
-﻿using Alquileres.Servidor.Models;
+﻿using Alquileres.Servidor.DTOs;
+using Alquileres.Servidor.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Alquileres.Servidor.Controllers
 {
-    // Indica que esta clase es un controlador de una API y define la ruta.
     [ApiController]
     [Route("api/[controller]")]
     public class PropiedadController : ControllerBase
     {
-        // Lista que almacena las propiedades.
-        private static List<Propiedad> propiedades = new()
-        { 
-            new Propiedad 
-            { 
-            Id = 1, 
-            Direccion = "Av. Belgrano 123",
-            Tipo = "Casa",
-            Habitaciones = 3,
-            Banios = 2,
-            Precio = 350000, 
-            Estado = "Disponible" 
-            },
-            new Propiedad 
-            {
-                Id = 2,
-                Direccion = "San Martín 456",
-                Tipo = "Departamento",
-                Habitaciones = 2,
-                Banios = 1,
-                Precio = 250000,
-                Estado = "Disponible"
-            } 
-        };
+        private readonly IPropiedadService service;
 
-        // Permite obtener todas las propiedades.
-        [HttpGet]
-        public ActionResult Get()
+        public PropiedadController(IPropiedadService service)
         {
-            return Ok(propiedades);
+            this.service = service;
         }
 
-        // Permite obtener una propiedad por su Id.
-        [HttpGet("{Id}")]
-        public IActionResult GetById(int id)
+        [HttpGet]
+        public IActionResult ObtenerTodos()
         {
-            var propiedad = propiedades.FirstOrDefault(a => a.Id == id);
+            return Ok(service.ObtenerTodos());
+        }
+
+
+        [HttpGet("{Id:int}")]
+        public IActionResult ObtenerPorId([FromRoute(Name = "Id")] int id)
+        {
+            var propiedad = service.ObtenerPorId(id);
 
             if (propiedad == null)
-            {
-                return NotFound();
-            }
+                return NotFound("La propiedad no existe.");
 
             return Ok(propiedad);
         }
 
-        // Busca una propiedad por Id para ser utilizada por otros controladores.
-        public static Propiedad? ObtenerPropiedadPorId(int id)
-        {
-            return propiedades.FirstOrDefault(p => p.Id == id);
-        }
-
-        // Permite agregar una nueva propiedad.
         [HttpPost]
-        public ActionResult Create(Propiedad propiedad)
+        public IActionResult Crear(PropiedadCreateDto dto)
         {
-            // Validar que el precio sea mayor que cero
-            if (propiedad.Precio <= 0)
-            {
-                return BadRequest("ERROR El precio debe ser mayor que cero");
-            }
-
-            // Validar que la dirección no esté vacía
-            if (string.IsNullOrWhiteSpace(propiedad.Direccion))
-            {
-                return BadRequest("La dirección es obligatoria");
-            }
-
-
-            propiedad.Id = propiedades.Any()
-                ? propiedades.Max(a => a.Id) + 1
-                : 1;
-
-            //Propiedad Creada con exito, se agrega a la lista de propiedades
-            propiedades.Add(propiedad);
+            var propiedad = service.Crear(dto);
 
             return CreatedAtAction(
-                nameof(GetById),
+                nameof(ObtenerPorId),
                 new { id = propiedad.Id },
-                propiedad
-            );
-
+                propiedad);
         }
-        
+
+        [HttpPut("{id:int}")]
+        public IActionResult Modificar(
+            int id, PropiedadUpdateDto dto)
+        {
+            try
+            {
+                var propiedad = service.Modificar(id, dto);
+
+                if (propiedad == null)
+                    return NotFound("La propiedad no existe.");
+
+                return Ok(propiedad);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult Eliminar(int id)
+        {
+            bool eliminado = service.Eliminar(id);
+
+            if (!eliminado)
+                return NotFound("La propiedad no existe.");
+
+            return NoContent();
+        }
     }
 }
 

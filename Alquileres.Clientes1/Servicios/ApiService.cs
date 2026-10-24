@@ -34,7 +34,7 @@ namespace Alquileres.Clientes1.Servicios
                     "api/Propiedad");
         }
 
-        
+        // Envia una nueva propiedad al servidor.
         public async Task<Propiedad?> CrearPropiedad(Propiedad propiedad)
         {
             var respuesta = await httpClient.PostAsJsonAsync(
