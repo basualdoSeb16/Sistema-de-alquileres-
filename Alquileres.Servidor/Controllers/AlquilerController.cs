@@ -1,67 +1,106 @@
-﻿using Alquileres.Servidor.Models;
+﻿
+using Alquileres.Servidor.DTOs;
+using Alquileres.Servidor.Models;
+using Alquileres.Servidor.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Alquileres.Servidor.Controllers
 {
-    // Indica que esta clase es un controlador de una API y define la ruta.
     [ApiController]
     [Route("api/[controller]")]
     public class AlquilerController : ControllerBase
     {
-        // Lista donde se almacenan los alquileres.
-        private static List<ALquiler> alquileres = new()
-        {
+        private readonly IAlquilerService alquilerService;
 
-        };
-
-        // Permite obtener todos los alquileres.
-        [HttpGet]
-        public IActionResult Get()
+        public AlquilerController(IAlquilerService alquilerService)
         {
-            return Ok(alquileres);
+            this.alquilerService = alquilerService;
         }
 
-        // Permite obtener un alquiler por su Id.
-        [HttpGet("{Id}")]
-        public IActionResult GetById(int id)
+        // GET: api/Alquiler
+        [HttpGet]
+        public IActionResult ObtenerTodos()
         {
-            var alquiler = alquileres.FirstOrDefault(a => a.Id == id);
+            return Ok(alquilerService.ObtenerTodos());
+        }
+
+        // GET: api/Alquiler/1
+        [HttpGet("{id:int}")]
+        public IActionResult ObtenerPorId(int id)
+        {
+            var alquiler = alquilerService.ObtenerPorId(id);
 
             if (alquiler == null)
             {
-                return NotFound();
+                return NotFound("El alquiler no existe.");
             }
 
             return Ok(alquiler);
-
         }
 
-        // Permite crear un nuevo alquiler.
-        [HttpPost] 
-        public ActionResult<ALquiler> CrearAlquiler(ALquiler alquiler)
+        // POST: api/Alquiler
+        [HttpPost]
+        public IActionResult Crear([FromBody] AlquilerCreateDto dto)
         {
-            var propiedad = PropiedadController.ObtenerPropiedadPorId(alquiler.PropiedadId);
-            if (propiedad == null)
-            { 
-                return NotFound("La propiedad no existe."); 
-            } 
-            
-            if (propiedad.Estado != "Disponible")
+            try
             {
-                return BadRequest("La propiedad no está disponible.");
+                var alquiler = alquilerService.Crear(dto);
+
+                return CreatedAtAction(
+                    nameof(ObtenerPorId),
+                    new { id = alquiler.Id },
+                    alquiler);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/Alquiler/1
+        [HttpPut("{id:int}")]
+        public IActionResult Modificar(
+            int id,
+            [FromBody] AlquilerUpdateDto dto)
+        {
+            try
+            {
+                var alquiler = alquilerService.Modificar(id, dto);
+
+                if (alquiler == null)
+                {
+                    return NotFound("El alquiler no existe.");
+                }
+
+                return Ok(alquiler);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/Alquiler/1
+        [HttpDelete("{id:int}")]
+        public IActionResult Eliminar(int id)
+        {
+            bool eliminado = alquilerService.Eliminar(id);
+
+            if (!eliminado)
+            {
+                return NotFound("El alquiler no existe.");
             }
 
-            alquileres.Add(alquiler);
-
-            propiedad.Estado = "Alquilada";
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = alquiler.Id },
-                alquiler
-            );
-           
+            return Ok("Alquiler eliminado correctamente.");
         }
-
     }
 }

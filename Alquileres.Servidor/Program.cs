@@ -1,3 +1,9 @@
+
+using Alquileres.Servidor.Repositories.Interfaces;
+using Alquileres.Servidor.Repositories.Implementations;
+using Alquileres.Servidor.Services.Interfaces;
+using Alquileres.Servidor.Services.Implementations;
+
 // Crea el constructor de la aplicación y carga su configuración.
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +13,18 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Agrega Swagger para probar y documentar la API.
 builder.Services.AddSwaggerGen();
+
+//Dependencias de propiedades
+builder.Services.AddSingleton<
+    IPropiedadRepository, PropiedadRepository>();
+
+builder.Services.AddScoped<
+    IPropiedadService, PropiedadService>();
+
+//Dependencias de alquileres
+builder.Services.AddSingleton<IAlquilerRepository, AlquilerRepository>();
+
+builder.Services.AddScoped<IAlquilerService, AlquilerService>();
 
 // Construye la aplicación.
 var app = builder.Build();
