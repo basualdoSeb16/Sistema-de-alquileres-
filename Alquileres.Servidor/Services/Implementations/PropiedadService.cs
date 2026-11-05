@@ -1,7 +1,9 @@
-﻿using Alquileres.Servidor.DTOs;
+﻿
+using Alquileres.Servidor.DTOs;
 using Alquileres.Servidor.Models;
 using Alquileres.Servidor.Repositories.Interfaces;
 using Alquileres.Servidor.Services.Interfaces;
+
 namespace Alquileres.Servidor.Services.Implementations
 {
     public class PropiedadService : IPropiedadService
@@ -27,8 +29,8 @@ namespace Alquileres.Servidor.Services.Implementations
         {
             Propiedad propiedad = new Propiedad
             {
-                Direccion = dto.Direccion.Trim(),
-                Tipo = dto.Tipo.Trim(),
+                Direccion = NormalizarTexto(dto.Direccion),
+                Tipo = NormalizarTexto(dto.Tipo),
                 Habitaciones = dto.Habitaciones,
                 Banios = dto.Banios,
                 Precio = dto.Precio,
@@ -46,15 +48,10 @@ namespace Alquileres.Servidor.Services.Implementations
             if (existente == null)
                 return null;
 
-            if (dto.Estado != "Disponible" &&
-                dto.Estado != "Alquilada")
-            {
-                throw new ArgumentException(
-                    "El estado debe ser Disponible o Alquilada.");
-            }
+            ValidarEstado(dto.Estado);
 
-            existente.Direccion = dto.Direccion.Trim();
-            existente.Tipo = dto.Tipo.Trim();
+            existente.Direccion = NormalizarTexto(dto.Direccion);
+            existente.Tipo = NormalizarTexto(dto.Tipo);
             existente.Habitaciones = dto.Habitaciones;
             existente.Banios = dto.Banios;
             existente.Precio = dto.Precio;
@@ -69,5 +66,21 @@ namespace Alquileres.Servidor.Services.Implementations
         {
             return repository.Eliminar(id);
         }
+
+        private static string NormalizarTexto(string texto)
+        {
+            return texto.Trim();
+        }
+
+        private static void ValidarEstado(string estado)
+        {
+            if (estado != "Disponible" &&
+                estado != "Alquilada")
+            {
+                throw new ArgumentException(
+                    "El estado debe ser Disponible o Alquilada.");
+            }
+        }
     }
 }
+
