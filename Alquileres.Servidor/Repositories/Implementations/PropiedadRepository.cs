@@ -63,13 +63,7 @@ namespace Alquileres.Servidor.Repositories.Implementations
 
         public bool Eliminar(int id)
         {
-            Propiedad? propiedad = ObtenerPorId(id);
-
-            if (propiedad == null)
-                return false;
-
-            propiedades.Remove(propiedad);
-            return true;
+            return propiedades.RemoveAll(p => p.Id == id) > 0;
         }
     }
 }
