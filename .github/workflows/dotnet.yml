@@ -23,8 +23,8 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restaurar dependencias
-        run: dotnet restore Alquileres.sln
+            - name: Restaurar dependencias
+        run: dotnet restore Alquileres.Tests/Alquileres.Tests.csproj
 
       - name: Compilar servidor
         run: dotnet build Alquileres.Servidor/Alquileres.Servidor.csproj --no-restore
