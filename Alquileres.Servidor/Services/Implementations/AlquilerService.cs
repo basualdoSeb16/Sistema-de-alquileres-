@@ -1,9 +1,11 @@
-﻿using Alquileres.Servidor.DTOs;
+﻿
+using Alquileres.Servidor.DTOs;
 using Alquileres.Servidor.Models;
 using Alquileres.Servidor.Repositories.Interfaces;
 using Alquileres.Servidor.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+
 namespace Alquileres.Servidor.Services.Implementations
 {
     public class AlquilerService : IAlquilerService
@@ -33,12 +35,7 @@ namespace Alquileres.Servidor.Services.Implementations
         {
             ValidarDatos(dto.Cliente, dto.FechaInicio, dto.FechaFin);
 
-            var propiedad = propiedadService.ObtenerPorId(dto.PropiedadId);
-
-            if (propiedad == null)
-            {
-                throw new ArgumentException("La propiedad no existe.");
-            }
+            var propiedad = ObtenerPropiedadExistente(dto.PropiedadId);
 
             if (propiedad.Estado != "Disponible")
             {
@@ -72,12 +69,7 @@ namespace Alquileres.Servidor.Services.Implementations
 
             ValidarDatos(dto.Cliente, dto.FechaInicio, dto.FechaFin);
 
-            var propiedadNueva = propiedadService.ObtenerPorId(dto.PropiedadId);
-
-            if (propiedadNueva == null)
-            {
-                throw new ArgumentException("La propiedad no existe.");
-            }
+            var propiedadNueva = ObtenerPropiedadExistente(dto.PropiedadId);
 
             bool cambiaPropiedad =
                 alquilerExistente.PropiedadId != dto.PropiedadId;
@@ -152,14 +144,22 @@ namespace Alquileres.Servidor.Services.Implementations
             }
         }
 
-        private void CambiarEstadoPropiedad(int propiedadId, string estado)
+        // Centraliza la búsqueda y validación de propiedades existentes.
+        private Propiedad ObtenerPropiedadExistente(int id)
         {
-            var propiedad = propiedadService.ObtenerPorId(propiedadId);
+            var propiedad = propiedadService.ObtenerPorId(id);
 
             if (propiedad == null)
             {
                 throw new ArgumentException("La propiedad no existe.");
             }
+
+            return propiedad;
+        }
+
+        private void CambiarEstadoPropiedad(int propiedadId, string estado)
+        {
+            var propiedad = ObtenerPropiedadExistente(propiedadId);
 
             var dto = new PropiedadUpdateDto
             {
@@ -173,6 +173,5 @@ namespace Alquileres.Servidor.Services.Implementations
 
             propiedadService.Modificar(propiedadId, dto);
         }
-
     }
 }

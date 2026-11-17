@@ -4,3 +4,6 @@
 *.user
 *.suo
 packages/
+
+# Resultados de pruebas automatizadas
+**/TestResults/

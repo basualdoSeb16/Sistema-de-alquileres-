@@ -1,0 +1,48 @@
+
+name: CI - Sistema de Alquileres
+
+on:
+  push:
+    branches:
+      - main
+      - 'mejora/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restaurar dependencias
+        run: dotnet restore Alquileres.Tests/Alquileres.Tests.csproj
+
+      - name: Compilar servidor
+        run: dotnet build Alquileres.Servidor/Alquileres.Servidor.csproj --no-restore
+
+      - name: Iniciar API
+        run: |
+          nohup dotnet run --project Alquileres.Servidor/Alquileres.Servidor.csproj --no-build -- --urls http://localhost:5031 > api.log 2>&1 &
+
+          for i in {1..30}; do
+            if curl -fsS http://localhost:5031/api/Propiedad > /dev/null; then
+              echo "API iniciada correctamente"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          cat api.log
+          exit 1
+
+      - name: Ejecutar pruebas
+        run: dotnet test Alquileres.Tests/Alquileres.Tests.csproj --no-restore --logger "console;verbosity=normal"
