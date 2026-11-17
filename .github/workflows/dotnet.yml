@@ -31,7 +31,7 @@ jobs:
 
       - name: Iniciar API
         run: |
-          nohup dotnet run --project Alquileres.Servidor/Alquileres.Servidor.csproj --no-build --urls http://localhost:5031 > api.log 2>&1 &
+          nohup dotnet run --project Alquileres.Servidor/Alquileres.Servidor.csproj --no-build -- --urls http://localhost:5031 > api.log 2>&1 &
           
           for i in {1..30}; do
             if curl -fsS http://localhost:5031/api/Propiedad > /dev/null; then
