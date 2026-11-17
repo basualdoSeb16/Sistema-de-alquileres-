@@ -12,7 +12,7 @@ namespace Alquileres.Tests.Funcionales
         {
             using var client = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7122/")
+                BaseAddress = new Uri("http://localhost:5031/")
             };
 
             int alquilerId = 0;
